@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block content %}
+<h1>Table: {{ table_name }}</h1>
+
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            {% for column in fields %}
+            <th>{{ column }}</th>
+            {% endfor %}
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            {% for cell in row %}
+            <td>{{ row|get_attribute:cell }}</td>
+            {% endfor %}
+            <td>
+                <a href="{% url 'edit_row' table_name row|get_attribute:idfield %}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'delete_row' table_name row|get_attribute:idfield %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'add_row' table_name %}" class="btn btn-success">Add New Row</a>
+{% endblock %}
