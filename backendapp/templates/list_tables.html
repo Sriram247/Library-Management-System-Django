@@ -1,10 +1,130 @@
 {% extends "base.html" %}
+{% load tz %}
 
 {% block content %}
-<h1>Database Tables</h1>
-<ul>
-    {% for table in tables %}
-    <li><a href="{% url 'view_table' table.name %}">{{ table.name }}</a></li>
-    {% endfor %}
-</ul>
+<div class="container mt-5">
+    
+    <!-- Table List Section -->
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Good Evening, here is the Book Inventory</h4>
+        </div>
+
+        <!-- Database Statistics Section (Inside Card but above Card Body) -->
+        <div class="card-body">
+            <h2>Database Statistics</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Books
+                        </div>
+                        <div class="card-body">
+                            <p><strong>{{ book_count }}</strong></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Authors
+                        </div>
+                        <div class="card-body">
+                            <p><strong>{{ author_count }}</strong></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Publishers
+                        </div>
+                        <div class="card-body">
+                            <p><strong>{{ publisher_count }}</strong></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Genres
+                        </div>
+                        <div class="card-body">
+                            <p><strong>{{ genre_count }}</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table List Body Section -->
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Table Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for table in tables %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ table.name }}</td>
+                        <td>
+                            <a href="{% url 'view_table' table.name %}" class="btn btn-dark btn-sm text-light">
+                                View Data
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">No tables available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Additional Actions Section -->
+    <div class="mt-5 text-center">
+        <h2>Additional Actions</h2>
+        <a href="{% url 'add_book' %}" class="btn btn-success btn-lg mt-3">
+            Add Book with Genre
+        </a>
+    </div>
+
+    <br><br>
+
+    {% if recent_changes %}
+    <h2>Recent Changes</h2>
+    <form method="post">
+        {% csrf_token %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Change Type</th>
+                    <th>Table</th>
+                    <th>Description</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for change in recent_changes %}
+                <tr>
+                    <td>{{ change.change_type }}</td>
+                    <td>{{ change.table_name }}</td>
+                    <td>{{ change.description }}</td>
+                    <td>{{ change.timestamp|localtime }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" name="delete_changes" class="btn btn-danger">Delete All Changes</button>
+    </form>
+    {% endif %}
+
+</div>
 {% endblock %}

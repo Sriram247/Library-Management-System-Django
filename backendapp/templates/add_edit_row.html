@@ -1,21 +1,43 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 
 {% block content %}
-<h1>{% if editing %}Edit{% else %}Add{% endif %} Row in {{ table_name }}</h1>
-
-<form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-    <div class="mb-3">
-        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-        {{ field }}
-        {% if field.errors %}
-        <div class="text-danger">
-            {{ field.errors }}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">{% if editing %}Edit{% else %}Add{% endif %} Row in {{ table_name }}</h4>
         </div>
-        {% endif %}
+        <div class="card-body">
+            <form method="post" class="row g-3">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="col-md-6">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field|add_attr:"class=form-control" }}
+                    {% if field.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ field.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-success">
+                        {% if editing %}Update{% else %}Add{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    {% endfor %}
-    <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Add{% endif %}</button>
-</form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            placeholder: "Select an option",
+            allowClear: true,
+            width: '100%' // Adjust dropdown width to fit the form control
+        });
+    });
+</script>
 {% endblock %}
